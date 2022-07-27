@@ -1,5 +1,5 @@
 course := "effective-scala"
-assignment := "fireworks"
+assignment := "democracy"
 
 scalaVersion := "3.1.0"
 
