@@ -1,11 +1,13 @@
 package todo
 
 import cats.implicits.*
-import java.nio.file.{Path, Paths, Files}
+
+import java.nio.file.{Files, Path, Paths}
 import java.nio.charset.StandardCharsets
 import io.circe.{Decoder, Encoder}
 import io.circe.parser.*
 import io.circe.syntax.*
+
 import scala.collection.mutable
 import todo.data.*
 
@@ -15,7 +17,8 @@ import todo.data.*
  *
  * You should modify this file.
  */
-object PersistentModel extends Model:
+object PersistentModel extends Model :
+
   import Codecs.given
 
   /** Path where the tasks are saved */
@@ -97,32 +100,51 @@ object PersistentModel extends Model:
    * (The InMemoryModel uses the same.)
    */
 
+  private val idStore: mutable.Map[Id, Task] = mutable.TreeMap.from(loadTasks().toMap)
+
   def create(task: Task): Id =
-    ???
+    val id = loadId()
+    idStore += id -> task
+    saveId(id.next)
+    saveTasks(tasks)
+    id
 
   def read(id: Id): Option[Task] =
-    ???
-
-  def update(id: Id)(f: Task => Task): Option[Task] =
-    ???
-
-  def delete(id: Id): Boolean =
-    ???
-
-  def tasks: Tasks =
-    ???
-
-  def tasks(tag: Tag): Tasks =
-    ???
+    idStore.get(id)
 
   def complete(id: Id): Option[Task] =
-    ???
+    update(id)(task => task.copy(state = State.completedNow))
+
+  def update(id: Id)(f: Task => Task): Option[Task] =
+    idStore.updateWith(id)(opt => opt.map(f))
+      .map(task => {
+        saveTasks(tasks)
+        task
+      })
+
+  def delete(id: Id): Boolean = {
+    idStore.remove(id)
+      .map(task => {
+        saveTasks(tasks)
+        task
+      })
+      .nonEmpty
+  }
+
+  def tasks: Tasks =
+    Tasks(idStore)
 
   def tags: Tags =
-    ???
+    Tags(idStore.values.flatMap(task => task.tags).toSet.toList)
+
+  def tasks(tag: Tag): Tasks =
+    Tasks(idStore.filter(_._2.tags.contains(tag)))
 
   /**
-  * Delete the tasks and id files if they exist.
-  */
+   * Delete the tasks and id files if they exist.
+   */
   def clear(): Unit =
-    ???
+    idStore.clear()
+    saveId(Id(0))
+    saveTasks(tasks)
+

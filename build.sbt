@@ -12,7 +12,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 libraryDependencies ++= Seq(
   ("org.creativescala" %% "doodle" % "0.9.21").cross(CrossVersion.for3Use2_13),
-  ("io.circe" %% "circe-parser" % CirceVersion).cross(CrossVersion.for3Use2_13)
+  ("io.circe" %% "circe-parser" % CirceVersion).cross(CrossVersion.for3Use2_13),
   ("org.http4s" %% "http4s-ember-server" % Http4sVersion).cross(CrossVersion.for3Use2_13),
   ("org.http4s" %% "http4s-circe" % Http4sVersion).cross(CrossVersion.for3Use2_13),
   ("org.http4s" %% "http4s-dsl" % Http4sVersion).cross(CrossVersion.for3Use2_13),
