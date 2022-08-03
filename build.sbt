@@ -1,5 +1,5 @@
 course := "effective-scala"
-assignment := "todo"
+assignment := "quickcheck"
 
 val DottyVersion = "3.1.0"
 val Http4sVersion = "1.0.0-M4"
@@ -10,6 +10,10 @@ scalaVersion := DottyVersion
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
+scalaVersion := "3.1.0"
+scalacOptions ++= Seq("-deprecation")
+libraryDependencies += "org.scalameta" %% "munit" % "0.7.26" % Test
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.15.4"
 libraryDependencies ++= Seq(
   ("org.creativescala" %% "doodle" % "0.9.21").cross(CrossVersion.for3Use2_13),
   ("io.circe" %% "circe-parser" % CirceVersion).cross(CrossVersion.for3Use2_13),
@@ -21,5 +25,3 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % Test,
   "org.scalacheck" %% "scalacheck" % "1.15.4" % Test
 )
-
-scalacOptions += "-language:implicitConversions"
